@@ -67,31 +67,6 @@ export class RentsService {
     return this.rentRepository.save({ user, details: subrents, total });
   }
 
-  async rentMovie(
-    userId: string,
-    movieId: string,
-  ): Promise<{ rentId: string; rentedAt: Date }> {
-    const user = await this.userRepository.findOne(userId);
-    if (!user) {
-      throw new NotFoundException('user not found');
-    }
-
-    const movie = await this.movieRepository.findOne(movieId);
-    if (!movie) {
-      throw new NotFoundException('movie not found');
-    }
-
-    const stock = movie.stock;
-    if (!stock) {
-      throw new UnprocessableEntityException('sold out movie ');
-    }
-
-    const rent = await this.rentRepository.save({ user, movie });
-    this.movieRepository.save({ ...movie, stock: stock - 1 });
-
-    return { rentId: rent.rentId, rentedAt: rent.rentedAt };
-  }
-
   async returnMovie(rentId: string): Promise<UpdateResult> {
     const rent = await this.rentRepository.findOne(rentId, {
       relations: ['movie'],
