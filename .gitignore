@@ -21,3 +21,5 @@ lerna-debug.log*
 /coverage
 /.nyc_output
 
+# Tryon
+*try*
