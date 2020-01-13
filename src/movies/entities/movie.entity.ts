@@ -6,11 +6,9 @@ import {
   UpdateDateColumn,
   ManyToMany,
   JoinTable,
-  OneToMany,
 } from 'typeorm';
 import { Tag } from 'src/tags/entities/tag.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Rent } from 'src/rents/entities/rent.entity';
 
 @Entity()
 export class Movie {
@@ -56,10 +54,4 @@ export class Movie {
     user => user.movies,
   )
   users: User[];
-
-  @OneToMany(
-    () => Rent,
-    rent => rent.movie,
-  )
-  rents!: Rent[];
 }

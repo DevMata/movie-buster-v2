@@ -11,6 +11,7 @@ import { SeedModule } from './seed/seed.module';
 import { RentsModule } from './rents/rents.module';
 import { OrdersModule } from './orders/orders.module';
 import { OrderDetailsModule } from './order-details/order-details.module';
+import { RentDetailsModule } from './rent-details/rent-details.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { OrderDetailsModule } from './order-details/order-details.module';
     RentsModule,
     OrdersModule,
     OrderDetailsModule,
+    RentDetailsModule,
   ],
 })
 export class AppModule {}
