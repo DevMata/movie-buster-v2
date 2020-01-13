@@ -1,7 +1,6 @@
 import {
   Injectable,
   NotFoundException,
-  UnprocessableEntityException,
   MethodNotAllowedException,
   BadRequestException,
 } from '@nestjs/common';
@@ -64,7 +63,15 @@ export class RentsService {
       .map(suborder => suborder.subTotal)
       .reduce((a, b) => a + b);
 
-    return this.rentRepository.save({ user, details: subrents, total });
+    const returnDate = new Date();
+    returnDate.setDate(returnDate.getDate() + 3);
+
+    return this.rentRepository.save({
+      user,
+      details: subrents,
+      total,
+      returnDate,
+    });
   }
 
   async returnMovie(rentId: string): Promise<UpdateResult> {
