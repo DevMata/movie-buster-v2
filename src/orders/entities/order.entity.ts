@@ -3,9 +3,11 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   ManyToOne,
+  OneToMany,
 } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { Movie } from 'src/movies/entities/movie.entity';
+import { User } from '../../users/entities/user.entity';
+import { Movie } from '../../movies/entities/movie.entity';
+import { OrderDetails } from '../../order-details/entities/order-detail.entity';
 
 @Entity()
 export class Order {
@@ -26,4 +28,10 @@ export class Order {
     movie => movie.orders,
   )
   movie!: Movie;
+
+  @OneToMany(
+    () => OrderDetails,
+    orderDetail => orderDetail.order,
+  )
+  details: OrderDetails[];
 }
