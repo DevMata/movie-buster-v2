@@ -24,6 +24,7 @@ export class OrderDetailsService {
     return this.orderDetailsRepository.save({
       quantity: quantity,
       movie: updatedMovie,
+      salePrice: updatedMovie.salePrice,
       subTotal: updatedMovie.salePrice * quantity,
     });
   }
