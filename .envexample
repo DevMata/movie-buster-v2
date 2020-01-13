@@ -1,0 +1,7 @@
+DB_PORT=your port
+DB_HOST=your host
+DB_NAME=movie-buster
+DB_USER=your user
+DB_PASS=your password
+
+JWT_SECRET=your secret
