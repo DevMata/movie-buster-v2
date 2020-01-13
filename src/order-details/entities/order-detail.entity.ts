@@ -3,8 +3,8 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToOne,
-  JoinTable,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Movie } from '../../movies/entities/movie.entity';
 import { Order } from '../../orders/entities/order.entity';
@@ -24,7 +24,7 @@ export class OrderDetails {
   subTotal: number;
 
   @OneToOne(() => Movie)
-  @JoinTable()
+  @JoinColumn()
   movie!: Movie;
 
   @ManyToOne(
