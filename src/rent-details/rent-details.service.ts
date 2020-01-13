@@ -35,7 +35,7 @@ export class RentDetailsService {
     return { ...movie, stock: stock - suborder.quantity };
   }
 
-  async makeSubOrder(movie: Movie, quantity: number): Promise<RentDetails> {
+  async makeSubRent(movie: Movie, quantity: number): Promise<RentDetails> {
     const updatedMovie = await this.movieRepository.save(movie);
 
     return this.rentDetailsRepository.save({
