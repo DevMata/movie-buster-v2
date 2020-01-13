@@ -11,6 +11,9 @@ import { SeedModule } from './seed/seed.module';
 import { RentsModule } from './rents/rents.module';
 import { OrdersModule } from './orders/orders.module';
 import { OrderDetailsModule } from './order-details/order-details.module';
+import { RentdetailsModule } from './rentdetails/rentdetails.module';
+import { RentDetailsModule } from './rent-details/rent-details.module';
+import { RentdetailsService } from './rentdetails/rentdetails.service';
 
 @Module({
   imports: [
@@ -27,6 +30,9 @@ import { OrderDetailsModule } from './order-details/order-details.module';
     RentsModule,
     OrdersModule,
     OrderDetailsModule,
+    RentdetailsModule,
+    RentDetailsModule,
   ],
+  providers: [RentdetailsService],
 })
 export class AppModule {}
