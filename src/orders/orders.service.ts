@@ -63,14 +63,14 @@ export class OrdersService {
       .map(suborder => suborder.subTotal)
       .reduce((a, b) => a + b);
 
-    const completed = await this.orderRepository.save({
+    const movieOrder = await this.orderRepository.save({
       user,
       details: suborders,
       total,
     });
 
-    this.emailService.send(user, completed, 'order');
+    this.emailService.send(user.email, movieOrder, 'order');
 
-    return completed;
+    return movieOrder;
   }
 }
