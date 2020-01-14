@@ -23,7 +23,9 @@ import { LikedMoviesService } from './services/liked-movies.service';
 import { Movie } from 'src/movies/entities/movie.entity';
 import { BoughtMoviesService } from './services/bought-movies.service';
 import { Order } from 'src/orders/entities/order.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(
