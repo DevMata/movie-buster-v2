@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { OrderDetails } from '../../order-details/entities/order-detail.entity';
+import { ApiHideProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Order {
@@ -16,6 +17,7 @@ export class Order {
   @CreateDateColumn()
   boughtAt: Date;
 
+  @ApiHideProperty()
   @ManyToOne(
     () => User,
     user => user.orders,
