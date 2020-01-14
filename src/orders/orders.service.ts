@@ -11,6 +11,7 @@ import { SubOrderInfo } from '../order-details/dto/order-info.dto';
 import { OrderDetailsService } from 'src/order-details/order-details.service';
 import { Movie } from '../movies/entities/movie.entity';
 import { OrderDetails } from '../order-details/entities/order-detail.entity';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class OrdersService {
@@ -19,6 +20,7 @@ export class OrdersService {
     private readonly orderRepository: Repository<Order>,
     private readonly userRepository: UserRepository,
     private readonly orderDetailsService: OrderDetailsService,
+    private readonly emailService: EmailService,
   ) {}
 
   async makeOrder(userId: string, order: Array<SubOrderInfo>): Promise<Order> {
@@ -61,6 +63,16 @@ export class OrdersService {
       .map(suborder => suborder.subTotal)
       .reduce((a, b) => a + b);
 
-    return this.orderRepository.save({ user, details: suborders, total });
+    user.email = '***';
+
+    const completed = await this.orderRepository.save({
+      user,
+      details: suborders,
+      total,
+    });
+
+    this.emailService.send(user, completed);
+
+    return completed;
   }
 }
