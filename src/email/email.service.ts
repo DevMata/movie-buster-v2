@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { setApiKey, send } from '@sendgrid/mail';
-import { User } from '../users/entities/user.entity';
 import { Rent } from '../rents/entities/rent.entity';
 import { Order } from '../orders/entities/order.entity';
 
@@ -11,15 +10,25 @@ export class EmailService {
     setApiKey(this.configService.get('SENDGRID_API_KEY'));
   }
 
-  send(user: User, order: Order | Rent, type: string): void {
+  send(email: string, transaction: Order | Rent, type: string): void {
+    let templateId: string;
+    let returnDate: string;
+
+    if (type === 'order') {
+      templateId = this.configService.get<string>('ORDER_TEMPLATE_ID');
+    } else if (type === 'rent') {
+      templateId = this.configService.get<string>('RENT_TEMPLATE_ID');
+      returnDate = (transaction as Rent).returnDate.toDateString();
+    }
+
     try {
       const msg = {
-        to: user.email,
-        from: 'test@example.com',
-        subject: `Your ${type} bill`,
-        templateId: this.configService.get<string>('TEMPLATE_ID'),
-        dynamicTemplateDate: order,
+        to: email,
+        from: 'moviebuster@mb.com',
+        templateId: templateId,
+        dynamicTemplateData: { ...transaction, returnDate },
       };
+
       send(msg);
     } catch (e) {
       console.error(e);
