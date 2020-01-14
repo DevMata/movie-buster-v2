@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { RentDetails } from '../../rent-details/entities/rent-detail.entity';
+import { ApiHideProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Rent {
@@ -23,6 +24,7 @@ export class Rent {
   @Column({ default: 'pending' })
   status: string;
 
+  @ApiHideProperty()
   @ManyToOne(
     () => User,
     user => user.rents,
