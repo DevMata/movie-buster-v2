@@ -11,14 +11,14 @@ export class EmailService {
     setApiKey(this.configService.get('SENDGRID_API_KEY'));
   }
 
-  send(user: User, order: Order | Rent): void {
+  send(user: User, order: Order | Rent, type: string): void {
     try {
       const msg = {
         to: user.email,
         from: 'test@example.com',
-        subject: 'Sending with Twilio SendGrid is Fun',
-        text: 'and easy to do anywhere, even with Node.js',
-        html: JSON.stringify(order),
+        subject: `Your ${type} bill`,
+        templateId: this.configService.get<string>('TEMPLATE_ID'),
+        dynamicTemplateDate: order,
       };
       send(msg);
     } catch (e) {
