@@ -13,6 +13,7 @@ import { SubOrderInfo } from '../order-details/dto/order-info.dto';
 import { RentDetailsService } from '../rent-details/rent-details.service';
 import { Movie } from '../movies/entities/movie.entity';
 import { RentDetails } from '../rent-details/entities/rent-detail.entity';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class RentsService {
@@ -21,6 +22,7 @@ export class RentsService {
     private readonly userRepository: UserRepository,
     private readonly movieRepository: MovieRepository,
     private readonly rentDetailsService: RentDetailsService,
+    private readonly emailService: EmailService,
   ) {}
 
   async makeRent(userId: string, rent: Array<SubOrderInfo>): Promise<Rent> {
@@ -66,12 +68,16 @@ export class RentsService {
     const returnDate = new Date();
     returnDate.setDate(returnDate.getDate() + 3);
 
-    return this.rentRepository.save({
+    const movieRent = await this.rentRepository.save({
       user,
       details: subrents,
       total,
       returnDate,
     });
+
+    this.emailService.send(user.email, movieRent, 'rent');
+
+    return movieRent;
   }
 
   async returnMovie(rentId: string): Promise<UpdateResult> {

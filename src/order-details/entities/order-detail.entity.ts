@@ -1,11 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToOne,
-  ManyToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Movie } from '../../movies/entities/movie.entity';
 import { Order } from '../../orders/entities/order.entity';
 
@@ -23,8 +16,7 @@ export class OrderDetails {
   @Column()
   subTotal: number;
 
-  @OneToOne(() => Movie)
-  @JoinColumn()
+  @ManyToOne(() => Movie)
   movie!: Movie;
 
   @ManyToOne(
