@@ -5,7 +5,9 @@ import { LoggedUser } from 'src/users/decorators/user.decorator';
 import { UserPayload } from 'src/authentication/dto/user-payload.dto';
 import { OrderDto } from './dto/order.dto';
 import { Order } from './entities/order.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('orders')
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
