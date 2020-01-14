@@ -63,15 +63,13 @@ export class OrdersService {
       .map(suborder => suborder.subTotal)
       .reduce((a, b) => a + b);
 
-    user.email = '***';
-
     const completed = await this.orderRepository.save({
       user,
       details: suborders,
       total,
     });
 
-    this.emailService.send(user, completed);
+    this.emailService.send(user, completed, 'order');
 
     return completed;
   }
