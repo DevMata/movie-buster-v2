@@ -11,18 +11,18 @@ export class EmailService {
     setApiKey(this.configService.get('SENDGRID_API_KEY'));
   }
 
-  setApiKey(): void {
-    setApiKey(this.configService.get('SENDGRID_API_KEY'));
-  }
-
   send(user: User, order: Order | Rent): void {
-    const msg = {
-      to: user.email,
-      from: 'test@example.com',
-      subject: 'Sending with Twilio SendGrid is Fun',
-      text: 'and easy to do anywhere, even with Node.js',
-      html: JSON.stringify(order),
-    };
-    send(msg);
+    try {
+      const msg = {
+        to: user.email,
+        from: 'test@example.com',
+        subject: 'Sending with Twilio SendGrid is Fun',
+        text: 'and easy to do anywhere, even with Node.js',
+        html: JSON.stringify(order),
+      };
+      send(msg);
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
