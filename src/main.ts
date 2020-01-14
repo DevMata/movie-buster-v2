@@ -10,6 +10,8 @@ async function bootstrap(): Promise<void> {
     .setTitle('Movie buster')
     .setDescription('The movie-buster API description')
     .setVersion('1.0')
+    .addTag('auth')
+    .addTag('users')
     .build();
 
   const document = SwaggerModule.createDocument(app, options);
