@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Tag } from 'src/tags/entities/tag.entity';
 import { User } from 'src/users/entities/user.entity';
+import { ApiHideProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Movie {
@@ -49,6 +50,7 @@ export class Movie {
   @JoinTable({ name: 'movie_tag' })
   tags: Tag[];
 
+  @ApiHideProperty()
   @ManyToMany(
     () => User,
     user => user.movies,
