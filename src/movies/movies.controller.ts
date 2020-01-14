@@ -21,7 +21,9 @@ import { TokenGuard } from 'src/authentication/guards/token.guard';
 import { Roles } from 'src/authentication/decorators/role.decorator';
 import { RoleGuard } from 'src/authentication/guards/role.guard';
 import { SerializedUser } from 'src/users/dto/user.serialize';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('movies')
 @Controller('movies')
 export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
