@@ -3,7 +3,9 @@ import { AuthenticationService } from './services/authentication.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { DeleteResult } from 'typeorm';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('authentication')
 export class AuthenticationController {
   constructor(private readonly authenticationService: AuthenticationService) {}
