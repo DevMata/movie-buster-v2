@@ -34,4 +34,18 @@ export class EmailService {
       console.error(e);
     }
   }
+
+  sendResetPasswordEmail(email: string, token: string): void {
+    const msg = {
+      to: email,
+      from: 'moviebuster@mb.com',
+      subject: 'Password reset',
+      html:
+        `<strong>You required a password reset</strong>` +
+        `</br></br>>` +
+        `Here is your token: ${token}`,
+    };
+
+    send(msg);
+  }
 }
