@@ -7,6 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { ApiHideProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Role {
@@ -22,6 +23,7 @@ export class Role {
   @UpdateDateColumn()
   modifiedAt: Date;
 
+  @ApiHideProperty()
   @OneToMany(
     () => User,
     user => user.role,

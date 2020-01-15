@@ -7,7 +7,9 @@ import { RentDto } from './dto/rent.dto';
 import { ReturnDto } from './dto/return.dto';
 import { UpdateResult } from 'typeorm';
 import { Rent } from './entities/rent.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('rents')
 @Controller('rents')
 export class RentsController {
   constructor(private readonly rentsService: RentsService) {}
