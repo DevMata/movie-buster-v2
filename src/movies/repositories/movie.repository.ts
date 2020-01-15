@@ -39,8 +39,9 @@ export class MovieRepository extends Repository<Movie> {
       .select([
         'movie.movieId',
         'movie.title',
-        'movie.likes',
         'movie.description',
+        'movie.likes',
+        'movie.stock',
         'tag',
       ])
       .getMany();
