@@ -31,9 +31,9 @@ export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
   @Get()
-  getMovies(@Query() filter: MovieFiltersDto): Promise<Array<Movie>> {
-    console.log(filter);
-    return this.moviesService.getMovies();
+  getMovies(@Query() filters: MovieFiltersDto): Promise<Array<Movie>> {
+    console.log(filters);
+    return this.moviesService.getMovies(filters);
   }
 
   @Get(':movieId')
