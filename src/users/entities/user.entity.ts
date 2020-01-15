@@ -39,10 +39,7 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(
-    () => Role,
-    role => role.users,
-  )
+  @ManyToOne(() => Role)
   role: Role;
 
   @ApiHideProperty()
