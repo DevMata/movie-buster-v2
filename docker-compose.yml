@@ -11,7 +11,8 @@ services:
 
   api:
     build: .
-
+    volumes:
+      - .:/app
     depends_on:
       - db
     ports:
