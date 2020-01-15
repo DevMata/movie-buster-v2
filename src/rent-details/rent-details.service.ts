@@ -48,7 +48,6 @@ export class RentDetailsService {
 
   async returnSubRent(movie: Movie, quantity: number): Promise<UpdateResult> {
     return this.movieRepository.update(movie.movieId, {
-      ...movie,
       stock: movie.stock + quantity,
     });
   }
