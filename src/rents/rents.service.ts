@@ -26,11 +26,11 @@ export class RentsService {
   ) {}
 
   async makeRent(userId: string, rent: Array<SubOrderInfo>): Promise<Rent> {
-    const res = rent
+    const uniqueMovieIds = rent
       .map(suborder => suborder.movieId)
       .every((id, i, a) => a.indexOf(id) === a.lastIndexOf(id));
 
-    if (!res) {
+    if (!uniqueMovieIds) {
       throw new BadRequestException('every movie Id must be unique');
     }
 
@@ -46,22 +46,22 @@ export class RentsService {
       movies.push(res);
     }
 
-    const subrentsInfo = movies.map((movie, i) => ({
+    const subrentTuples = movies.map((movie, i) => ({
       movie,
       quantity: rent[i].quantity,
     }));
 
-    const subrents = new Array<RentDetails>();
+    const rentDetails = new Array<RentDetails>();
 
-    for (const subrent of subrentsInfo) {
+    for (const subrent of subrentTuples) {
       const res = await this.rentDetailsService.makeSubRent(
         subrent.movie,
         subrent.quantity,
       );
-      subrents.push(res);
+      rentDetails.push(res);
     }
 
-    const total = subrents
+    const rentTotalBilled = rentDetails
       .map(suborder => suborder.subTotal)
       .reduce((a, b) => a + b);
 
@@ -70,8 +70,8 @@ export class RentsService {
 
     const movieRent = await this.rentRepository.save({
       user,
-      details: subrents,
-      total,
+      details: rentDetails,
+      total: rentTotalBilled,
       returnDate,
     });
 
@@ -82,8 +82,9 @@ export class RentsService {
 
   async returnMovie(rentId: string): Promise<UpdateResult> {
     const rent = await this.rentRepository.findOne(rentId, {
-      relations: ['movie'],
+      relations: ['details', 'details.movie'],
     });
+
     if (!rent) {
       throw new NotFoundException('rent not found');
     }
@@ -94,10 +95,12 @@ export class RentsService {
       );
     }
 
-    // const stock = (await this.movieRepository.findOne(rent.movie.movieId))
-    //   .stock;
+    await Promise.all(
+      rent.details.map(subrent =>
+        this.rentDetailsService.returnSubRent(subrent.movie, subrent.quantity),
+      ),
+    );
 
-    // this.movieRepository.update(rent.movie.movieId, { stock: stock + 1 });
-    return this.rentRepository.update(rent.rentId, { status: 'returned' });
+    return this.rentRepository.update(rentId, { status: 'returned' });
   }
 }
