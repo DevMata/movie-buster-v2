@@ -1,6 +1,6 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { LoggedUser } from './decorators/user.decorator';
+import { LoggedUser } from '../decorators/user.decorator';
 import { UserPayload } from 'src/authentication/dto/user-payload.dto';
 
 @Controller('users/me')
