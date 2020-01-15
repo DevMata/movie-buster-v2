@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RentDetails } from './entities/rent-detail.entity';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { MovieRepository } from '../movies/repositories/movie.repository';
 import { Movie } from '../movies/entities/movie.entity';
 import { SubOrderInfo } from '../order-details/dto/order-info.dto';
@@ -43,6 +43,13 @@ export class RentDetailsService {
       movie: updatedMovie,
       rentPrice: updatedMovie.rentPrice,
       subTotal: updatedMovie.rentPrice * quantity,
+    });
+  }
+
+  async returnSubRent(movie: Movie, quantity: number): Promise<UpdateResult> {
+    return this.movieRepository.update(movie.movieId, {
+      ...movie,
+      stock: movie.stock + quantity,
     });
   }
 }
