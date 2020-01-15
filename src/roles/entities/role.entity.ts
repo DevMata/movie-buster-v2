@@ -9,7 +9,7 @@ import {
 @Entity()
 export class Role {
   @PrimaryGeneratedColumn('uuid')
-  rolId: string;
+  roleId: string;
 
   @Column()
   name: string;
