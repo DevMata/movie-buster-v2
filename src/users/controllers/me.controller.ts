@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards, Post } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { LoggedUser } from '../decorators/user.decorator';
 import { UserPayload } from '../../authentication/dto/user-payload.dto';
@@ -10,6 +10,8 @@ import { User } from '../entities/user.entity';
 import { Movie } from 'src/movies/entities/movie.entity';
 import { Order } from 'src/orders/entities/order.entity';
 import { Rent } from 'src/rents/entities/rent.entity';
+import { ChangePasswordDto } from '../dto/change-password.dto';
+import { UpdateResult } from 'typeorm';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('users/me')
@@ -39,5 +41,13 @@ export class MeController {
   @Get('rents')
   getRentedMovies(@LoggedUser() user: UserPayload): Promise<Array<Rent>> {
     return this.rentedMoviesService.getRentedMovies(user.userId);
+  }
+
+  @Post('changePassword')
+  changePassword(
+    @LoggedUser() user: UserPayload,
+    passwordDto: ChangePasswordDto,
+  ): Promise<UpdateResult> {
+    return this.usersService.changePassword(user.userId, passwordDto.password);
   }
 }
