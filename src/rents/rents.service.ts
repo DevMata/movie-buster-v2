@@ -78,10 +78,16 @@ export class RentsService {
     return movieRent;
   }
 
-  async returnMovies(rentId: string): Promise<UpdateResult> {
+  async returnMovies(rentId: string, userId: string): Promise<UpdateResult> {
     const rent = await this.rentRepository.findOne(rentId, {
       relations: ['details', 'details.movie'],
     });
+
+    if (rent.user.userId !== userId) {
+      throw new MethodNotAllowedException(
+        'only the owner of a rent can return it',
+      );
+    }
 
     if (!rent) {
       throw new NotFoundException('rent not found');
