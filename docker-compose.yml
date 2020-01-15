@@ -17,4 +17,4 @@ services:
       - db
     ports:
       - 3000:3000
-    command: npm run up
+    command: npm run start:dev
