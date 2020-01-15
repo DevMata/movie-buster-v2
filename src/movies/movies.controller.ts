@@ -32,7 +32,6 @@ export class MoviesController {
 
   @Get()
   getMovies(@Query() filters: MovieFiltersDto): Promise<Array<Movie>> {
-    console.log(filters);
     return this.moviesService.getMovies(filters);
   }
 
