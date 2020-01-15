@@ -10,7 +10,7 @@ export class EmailService {
     setApiKey(this.configService.get('SENDGRID_API_KEY'));
   }
 
-  send(email: string, transaction: Order | Rent, type: string): void {
+  send(email: string, transaction: Order | Rent, type: 'order' | 'rent'): void {
     let templateId: string;
     let returnDate: string;
 

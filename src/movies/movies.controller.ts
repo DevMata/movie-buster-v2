@@ -8,6 +8,7 @@ import {
   UseGuards,
   UseInterceptors,
   ClassSerializerInterceptor,
+  Query,
 } from '@nestjs/common';
 import { MoviesService } from './movies.service';
 import { Movie } from './entities/movie.entity';
@@ -22,6 +23,7 @@ import { Roles } from 'src/authentication/decorators/role.decorator';
 import { RoleGuard } from 'src/authentication/guards/role.guard';
 import { SerializedUser } from 'src/users/dto/user.serialize';
 import { ApiTags } from '@nestjs/swagger';
+import { MovieFiltersDto } from './dto/movie-filters.dto';
 
 @ApiTags('movies')
 @Controller('movies')
@@ -29,8 +31,9 @@ export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
   @Get()
-  getMovies(): Promise<Array<Movie>> {
-    return this.moviesService.getMovies();
+  getMovies(@Query() filters: MovieFiltersDto): Promise<Array<Movie>> {
+    console.log(filters);
+    return this.moviesService.getMovies(filters);
   }
 
   @Get(':movieId')
