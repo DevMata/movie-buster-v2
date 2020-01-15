@@ -12,7 +12,7 @@ services:
   api:
     build: .
     volumes:
-      - .:/app
+      - .:/usr/src/app
     depends_on:
       - db
     ports:
