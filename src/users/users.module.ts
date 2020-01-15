@@ -11,6 +11,8 @@ import { Rent } from 'src/rents/entities/rent.entity';
 import { LikedMoviesService } from './services/liked-movies.service';
 import { Order } from 'src/orders/entities/order.entity';
 import { BoughtMoviesService } from './services/bought-movies.service';
+import { MeController } from './me.controller';
+import { MeService } from './services/me.service';
 
 @Module({
   imports: [
@@ -24,8 +26,9 @@ import { BoughtMoviesService } from './services/bought-movies.service';
     RentedMoviesService,
     LikedMoviesService,
     BoughtMoviesService,
+    MeService,
   ],
   exports: [UsersService, TypeOrmModule, HashHelper, AuthenticationModule],
-  controllers: [UsersController],
+  controllers: [MeController, UsersController],
 })
 export class UsersModule {}
