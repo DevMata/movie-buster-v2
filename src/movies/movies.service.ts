@@ -30,16 +30,19 @@ export class MoviesService {
   }
 
   async createMovie(createMovieDto: CreateMovieDto): Promise<Movie> {
-    await this.movieRepository.findMovieByTitle(createMovieDto.title);
+    const movie = await this.movieRepository.findMovieByTitle(
+      createMovieDto.title,
+    );
+    if (movie) {
+      throw new ConflictException('there is already a movie with that title');
+    }
 
     let tags: Array<Tag> = [];
     if (createMovieDto.tags.length) {
       tags = await this.tagsService.createTags({ tags: createMovieDto.tags });
     }
 
-    const movie = { ...createMovieDto, tags };
-
-    return this.movieRepository.save(movie);
+    return this.movieRepository.save({ ...createMovieDto, tags });
   }
 
   async updateMovie(
