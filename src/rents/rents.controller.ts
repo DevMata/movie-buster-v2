@@ -15,17 +15,20 @@ export class RentsController {
   constructor(private readonly rentsService: RentsService) {}
 
   @UseGuards(AuthGuard('jwt'))
-  @Post(':rentId/return')
-  returnMovie(@Param() returnDto: ReturnDto): Promise<UpdateResult> {
-    return this.rentsService.returnMovie(returnDto.rentId);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
   @Post()
   rentMovies(
     @LoggedUser() user: UserPayload,
     @Body() rentDto: RentDto,
   ): Promise<Rent> {
     return this.rentsService.makeRent(user.userId, rentDto.rent);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @Post(':rentId/return')
+  returnMovies(
+    @Param() returnDto: ReturnDto,
+    @LoggedUser() user: UserPayload,
+  ): Promise<UpdateResult> {
+    return this.rentsService.returnMovies(returnDto.rentId, user.userId);
   }
 }

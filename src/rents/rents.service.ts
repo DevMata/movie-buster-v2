@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Rent } from './entities/rent.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { UserRepository } from '../users/repositories/user.repository';
-import { MovieRepository } from '../movies/repositories/movie.repository';
 import { SubOrderInfo } from '../order-details/dto/order-info.dto';
 import { RentDetailsService } from '../rent-details/rent-details.service';
 import { Movie } from '../movies/entities/movie.entity';
@@ -20,17 +19,16 @@ export class RentsService {
   constructor(
     @InjectRepository(Rent) private readonly rentRepository: Repository<Rent>,
     private readonly userRepository: UserRepository,
-    private readonly movieRepository: MovieRepository,
     private readonly rentDetailsService: RentDetailsService,
     private readonly emailService: EmailService,
   ) {}
 
   async makeRent(userId: string, rent: Array<SubOrderInfo>): Promise<Rent> {
-    const res = rent
+    const uniqueMovieIds = rent
       .map(suborder => suborder.movieId)
       .every((id, i, a) => a.indexOf(id) === a.lastIndexOf(id));
 
-    if (!res) {
+    if (!uniqueMovieIds) {
       throw new BadRequestException('every movie Id must be unique');
     }
 
@@ -46,22 +44,22 @@ export class RentsService {
       movies.push(res);
     }
 
-    const subrentsInfo = movies.map((movie, i) => ({
+    const subrentTuples = movies.map((movie, i) => ({
       movie,
       quantity: rent[i].quantity,
     }));
 
-    const subrents = new Array<RentDetails>();
+    const rentDetails = new Array<RentDetails>();
 
-    for (const subrent of subrentsInfo) {
+    for (const subrent of subrentTuples) {
       const res = await this.rentDetailsService.makeSubRent(
         subrent.movie,
         subrent.quantity,
       );
-      subrents.push(res);
+      rentDetails.push(res);
     }
 
-    const total = subrents
+    const rentTotalBilled = rentDetails
       .map(suborder => suborder.subTotal)
       .reduce((a, b) => a + b);
 
@@ -70,8 +68,8 @@ export class RentsService {
 
     const movieRent = await this.rentRepository.save({
       user,
-      details: subrents,
-      total,
+      details: rentDetails,
+      total: rentTotalBilled,
       returnDate,
     });
 
@@ -80,24 +78,39 @@ export class RentsService {
     return movieRent;
   }
 
-  async returnMovie(rentId: string): Promise<UpdateResult> {
+  async returnMovies(rentId: string, userId: string): Promise<UpdateResult> {
     const rent = await this.rentRepository.findOne(rentId, {
-      relations: ['movie'],
+      relations: ['details', 'details.movie'],
     });
+
+    if (rent.user.userId !== userId) {
+      throw new MethodNotAllowedException(
+        'only the owner of a rent can return it',
+      );
+    }
+
     if (!rent) {
       throw new NotFoundException('rent not found');
     }
 
     if (rent.status === 'returned') {
       throw new MethodNotAllowedException(
-        'the movie has already been returned',
+        'the movie/s have already been returned',
       );
     }
 
-    // const stock = (await this.movieRepository.findOne(rent.movie.movieId))
-    //   .stock;
+    const returningMovies = rent.details.map(subrent => ({
+      movie: subrent.movie,
+      quantity: subrent.quantity,
+    }));
 
-    // this.movieRepository.update(rent.movie.movieId, { stock: stock + 1 });
-    return this.rentRepository.update(rent.rentId, { status: 'returned' });
+    for (const subrent of returningMovies) {
+      await this.rentDetailsService.returnSubRent(
+        subrent.movie,
+        subrent.quantity,
+      );
+    }
+
+    return this.rentRepository.update(rentId, { status: 'returned' });
   }
 }
