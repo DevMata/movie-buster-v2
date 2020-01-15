@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Rent } from './entities/rent.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { UserRepository } from '../users/repositories/user.repository';
-import { MovieRepository } from '../movies/repositories/movie.repository';
 import { SubOrderInfo } from '../order-details/dto/order-info.dto';
 import { RentDetailsService } from '../rent-details/rent-details.service';
 import { Movie } from '../movies/entities/movie.entity';
@@ -20,7 +19,6 @@ export class RentsService {
   constructor(
     @InjectRepository(Rent) private readonly rentRepository: Repository<Rent>,
     private readonly userRepository: UserRepository,
-    private readonly movieRepository: MovieRepository,
     private readonly rentDetailsService: RentDetailsService,
     private readonly emailService: EmailService,
   ) {}
@@ -80,7 +78,7 @@ export class RentsService {
     return movieRent;
   }
 
-  async returnMovie(rentId: string): Promise<UpdateResult> {
+  async returnMovies(rentId: string): Promise<UpdateResult> {
     const rent = await this.rentRepository.findOne(rentId, {
       relations: ['details', 'details.movie'],
     });
@@ -91,15 +89,21 @@ export class RentsService {
 
     if (rent.status === 'returned') {
       throw new MethodNotAllowedException(
-        'the movie has already been returned',
+        'the movie/s have already been returned',
       );
     }
 
-    await Promise.all(
-      rent.details.map(subrent =>
-        this.rentDetailsService.returnSubRent(subrent.movie, subrent.quantity),
-      ),
-    );
+    const returningMovies = rent.details.map(subrent => ({
+      movie: subrent.movie,
+      quantity: subrent.quantity,
+    }));
+
+    for (const subrent of returningMovies) {
+      await this.rentDetailsService.returnSubRent(
+        subrent.movie,
+        subrent.quantity,
+      );
+    }
 
     return this.rentRepository.update(rentId, { status: 'returned' });
   }
