@@ -13,9 +13,11 @@ import { Role } from 'src/roles/entities/role.entity';
 import { Movie } from 'src/movies/entities/movie.entity';
 import { Rent } from 'src/rents/entities/rent.entity';
 import { Order } from 'src/orders/entities/order.entity';
+import { ApiProperty, ApiHideProperty } from '@nestjs/swagger';
 
 @Entity()
 export class User {
+  @ApiProperty()
   @PrimaryGeneratedColumn('uuid')
   userId: string;
 
@@ -37,12 +39,10 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @ManyToOne(
-    () => Role,
-    role => role.users,
-  )
+  @ManyToOne(() => Role)
   role: Role;
 
+  @ApiHideProperty()
   @ManyToMany(
     () => Movie,
     movie => movie.users,
@@ -50,12 +50,14 @@ export class User {
   @JoinTable({ name: 'like' })
   movies: Movie[];
 
+  @ApiHideProperty()
   @OneToMany(
     () => Rent,
     rent => rent.user,
   )
   rents!: Rent[];
 
+  @ApiHideProperty()
   @OneToMany(
     () => Order,
     order => order.user,

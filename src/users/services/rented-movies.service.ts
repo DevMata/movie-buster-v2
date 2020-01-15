@@ -17,9 +17,14 @@ export class RentedMoviesService {
       throw new NotFoundException('user not found');
     }
 
-    return this.rentRepository.find({
-      where: { user: user },
-      relations: ['movie'],
-    });
+    const res = await this.rentRepository
+      .createQueryBuilder('rent')
+      .leftJoinAndSelect('rent.details', 'detail')
+      .leftJoinAndSelect('detail.movie', 'movie')
+      .select(['rent', 'detail', 'movie.movieId', 'movie.title'])
+      .where({ user: userId })
+      .getMany();
+
+    return res;
   }
 }

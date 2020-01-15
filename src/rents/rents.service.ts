@@ -1,66 +1,116 @@
 import {
   Injectable,
   NotFoundException,
-  UnprocessableEntityException,
   MethodNotAllowedException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Rent } from './entities/rent.entity';
 import { Repository, UpdateResult } from 'typeorm';
-import { UserRepository } from 'src/users/repositories/user.repository';
-import { MovieRepository } from 'src/movies/repositories/movie.repository';
+import { UserRepository } from '../users/repositories/user.repository';
+import { SubOrderInfo } from '../order-details/dto/order-info.dto';
+import { RentDetailsService } from '../rent-details/rent-details.service';
+import { Movie } from '../movies/entities/movie.entity';
+import { RentDetails } from '../rent-details/entities/rent-detail.entity';
+import { EmailService } from 'src/email/email.service';
 
 @Injectable()
 export class RentsService {
   constructor(
     @InjectRepository(Rent) private readonly rentRepository: Repository<Rent>,
     private readonly userRepository: UserRepository,
-    private readonly movieRepository: MovieRepository,
+    private readonly rentDetailsService: RentDetailsService,
+    private readonly emailService: EmailService,
   ) {}
 
-  async rentMovie(
-    userId: string,
-    movieId: string,
-  ): Promise<{ rentId: string; rentedAt: Date }> {
+  async makeRent(userId: string, rent: Array<SubOrderInfo>): Promise<Rent> {
+    const uniqueMovieIds = rent
+      .map(suborder => suborder.movieId)
+      .every((id, i, a) => a.indexOf(id) === a.lastIndexOf(id));
+
+    if (!uniqueMovieIds) {
+      throw new BadRequestException('every movie Id must be unique');
+    }
+
     const user = await this.userRepository.findOne(userId);
     if (!user) {
       throw new NotFoundException('user not found');
     }
 
-    const movie = await this.movieRepository.findOne(movieId);
-    if (!movie) {
-      throw new NotFoundException('movie not found');
+    const movies = new Array<Movie>();
+
+    for (const subrent of rent) {
+      const res = await this.rentDetailsService.validateSubRent(subrent);
+      movies.push(res);
     }
 
-    const stock = movie.stock;
-    if (!stock) {
-      throw new UnprocessableEntityException('sold out movie ');
+    const subrentTuples = movies.map((movie, i) => ({
+      movie,
+      quantity: rent[i].quantity,
+    }));
+
+    const rentDetails = new Array<RentDetails>();
+
+    for (const subrent of subrentTuples) {
+      const res = await this.rentDetailsService.makeSubRent(
+        subrent.movie,
+        subrent.quantity,
+      );
+      rentDetails.push(res);
     }
 
-    const rent = await this.rentRepository.save({ user, movie });
-    this.movieRepository.save({ ...movie, stock: stock - 1 });
+    const rentTotalBilled = rentDetails
+      .map(suborder => suborder.subTotal)
+      .reduce((a, b) => a + b);
 
-    return { rentId: rent.rentId, rentedAt: rent.rentedAt };
+    const returnDate = new Date();
+    returnDate.setDate(returnDate.getDate() + 3);
+
+    const movieRent = await this.rentRepository.save({
+      user,
+      details: rentDetails,
+      total: rentTotalBilled,
+      returnDate,
+    });
+
+    this.emailService.send(user.email, movieRent, 'rent');
+
+    return movieRent;
   }
 
-  async returnMovie(rentId: string): Promise<UpdateResult> {
+  async returnMovies(rentId: string, userId: string): Promise<UpdateResult> {
     const rent = await this.rentRepository.findOne(rentId, {
-      relations: ['movie'],
+      relations: ['details', 'details.movie'],
     });
+
+    if (rent.user.userId !== userId) {
+      throw new MethodNotAllowedException(
+        'only the owner of a rent can return it',
+      );
+    }
+
     if (!rent) {
       throw new NotFoundException('rent not found');
     }
 
     if (rent.status === 'returned') {
       throw new MethodNotAllowedException(
-        'the movie has already been returned',
+        'the movie/s have already been returned',
       );
     }
 
-    const stock = (await this.movieRepository.findOne(rent.movie.movieId))
-      .stock;
+    const returningMovies = rent.details.map(subrent => ({
+      movie: subrent.movie,
+      quantity: subrent.quantity,
+    }));
 
-    this.movieRepository.update(rent.movie.movieId, { stock: stock + 1 });
-    return this.rentRepository.update(rent.rentId, { status: 'returned' });
+    for (const subrent of returningMovies) {
+      await this.rentDetailsService.returnSubRent(
+        subrent.movie,
+        subrent.quantity,
+      );
+    }
+
+    return this.rentRepository.update(rentId, { status: 'returned' });
   }
 }

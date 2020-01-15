@@ -1,6 +1,10 @@
-import { IsUUID } from 'class-validator';
+import { ValidateNested, ArrayNotEmpty } from 'class-validator';
+import { SubOrderInfo } from 'src/order-details/dto/order-info.dto';
+import { Type } from 'class-transformer';
 
 export class OrderDto {
-  @IsUUID()
-  movieId: string;
+  @ValidateNested({ each: true })
+  @ArrayNotEmpty()
+  @Type(() => SubOrderInfo)
+  order: SubOrderInfo[];
 }

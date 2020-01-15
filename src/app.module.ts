@@ -10,6 +10,9 @@ import { AuthenticationModule } from './authentication/authentication.module';
 import { SeedModule } from './seed/seed.module';
 import { RentsModule } from './rents/rents.module';
 import { OrdersModule } from './orders/orders.module';
+import { OrderDetailsModule } from './order-details/order-details.module';
+import { RentDetailsModule } from './rent-details/rent-details.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -25,6 +28,9 @@ import { OrdersModule } from './orders/orders.module';
     SeedModule,
     RentsModule,
     OrdersModule,
+    OrderDetailsModule,
+    RentDetailsModule,
+    EmailModule,
   ],
 })
 export class AppModule {}

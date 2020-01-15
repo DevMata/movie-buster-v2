@@ -6,23 +6,29 @@ import { UserPayload } from 'src/authentication/dto/user-payload.dto';
 import { RentDto } from './dto/rent.dto';
 import { ReturnDto } from './dto/return.dto';
 import { UpdateResult } from 'typeorm';
+import { Rent } from './entities/rent.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('rents')
 @Controller('rents')
 export class RentsController {
   constructor(private readonly rentsService: RentsService) {}
 
   @UseGuards(AuthGuard('jwt'))
   @Post()
-  rentMovie(
+  rentMovies(
     @LoggedUser() user: UserPayload,
     @Body() rentDto: RentDto,
-  ): Promise<{ rentId: string; rentedAt: Date }> {
-    return this.rentsService.rentMovie(user.userId, rentDto.movieId);
+  ): Promise<Rent> {
+    return this.rentsService.makeRent(user.userId, rentDto.rent);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Post(':rentId/return')
-  returnMovie(@Param() returnDto: ReturnDto): Promise<UpdateResult> {
-    return this.rentsService.returnMovie(returnDto.rentId);
+  returnMovies(
+    @Param() returnDto: ReturnDto,
+    @LoggedUser() user: UserPayload,
+  ): Promise<UpdateResult> {
+    return this.rentsService.returnMovies(returnDto.rentId, user.userId);
   }
 }

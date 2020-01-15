@@ -6,12 +6,10 @@ import {
   UpdateDateColumn,
   ManyToMany,
   JoinTable,
-  OneToMany,
 } from 'typeorm';
 import { Tag } from 'src/tags/entities/tag.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Rent } from 'src/rents/entities/rent.entity';
-import { Order } from 'src/orders/entities/order.entity';
+import { ApiHideProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Movie {
@@ -52,21 +50,10 @@ export class Movie {
   @JoinTable({ name: 'movie_tag' })
   tags: Tag[];
 
+  @ApiHideProperty()
   @ManyToMany(
     () => User,
     user => user.movies,
   )
   users: User[];
-
-  @OneToMany(
-    () => Rent,
-    rent => rent.movie,
-  )
-  rents!: Rent[];
-
-  @OneToMany(
-    () => Order,
-    order => order.movie,
-  )
-  orders!: Order[];
 }

@@ -12,6 +12,7 @@ import { UpdateMovieDto } from './dto/update-movie.dto';
 import { UserPayload } from 'src/authentication/dto/user-payload.dto';
 import { UserRepository } from 'src/users/repositories/user.repository';
 import { SerializedUser } from 'src/users/dto/user.serialize';
+import { MovieFiltersDto } from './dto/movie-filters.dto';
 
 @Injectable()
 export class MoviesService {
@@ -21,8 +22,8 @@ export class MoviesService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  getMovies(): Promise<Array<Movie>> {
-    return this.movieRepository.getMovies();
+  getMovies(filters: MovieFiltersDto): Promise<Array<Movie>> {
+    return this.movieRepository.getMovies(filters);
   }
 
   getMovie(movieId: string): Promise<Movie> {
@@ -30,16 +31,19 @@ export class MoviesService {
   }
 
   async createMovie(createMovieDto: CreateMovieDto): Promise<Movie> {
-    await this.movieRepository.findMovieByTitle(createMovieDto.title);
+    const movie = await this.movieRepository.findMovieByTitle(
+      createMovieDto.title,
+    );
+    if (movie) {
+      throw new ConflictException('there is already a movie with that title');
+    }
 
     let tags: Array<Tag> = [];
     if (createMovieDto.tags.length) {
       tags = await this.tagsService.createTags({ tags: createMovieDto.tags });
     }
 
-    const movie = { ...createMovieDto, tags };
-
-    return this.movieRepository.save(movie);
+    return this.movieRepository.save({ ...createMovieDto, tags });
   }
 
   async updateMovie(

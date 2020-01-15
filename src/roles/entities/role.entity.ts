@@ -4,14 +4,12 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
 } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
 
 @Entity()
 export class Role {
   @PrimaryGeneratedColumn('uuid')
-  rolId: string;
+  roleId: string;
 
   @Column()
   name: string;
@@ -21,10 +19,4 @@ export class Role {
 
   @UpdateDateColumn()
   modifiedAt: Date;
-
-  @OneToMany(
-    () => User,
-    user => user.role,
-  )
-  users: User[];
 }

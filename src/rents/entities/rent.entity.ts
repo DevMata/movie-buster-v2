@@ -4,9 +4,11 @@ import {
   CreateDateColumn,
   ManyToOne,
   Column,
+  OneToMany,
 } from 'typeorm';
-import { User } from 'src/users/entities/user.entity';
-import { Movie } from 'src/movies/entities/movie.entity';
+import { User } from '../../users/entities/user.entity';
+import { RentDetails } from '../../rent-details/entities/rent-detail.entity';
+import { ApiHideProperty } from '@nestjs/swagger';
 
 @Entity()
 export class Rent {
@@ -16,18 +18,22 @@ export class Rent {
   @CreateDateColumn()
   rentedAt: Date;
 
+  @Column()
+  returnDate: Date;
+
   @Column({ default: 'pending' })
   status: string;
 
+  @ApiHideProperty()
   @ManyToOne(
     () => User,
     user => user.rents,
   )
   user!: User;
 
-  @ManyToOne(
-    () => Movie,
-    movie => movie.rents,
+  @OneToMany(
+    () => RentDetails,
+    rentDetails => rentDetails.rent,
   )
-  movie!: Movie;
+  details: RentDetails[];
 }
