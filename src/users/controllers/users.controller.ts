@@ -7,21 +7,21 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { UsersService } from './services/users.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
-import { UserIdDto } from './dto/user-id.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { ChangeRoleDto } from './dto/change-role.dto';
+import { UsersService } from '../services/users.service';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { User } from '../entities/user.entity';
+import { UserIdDto } from '../dto/user-id.dto';
+import { UpdateUserDto } from '../dto/update-user.dto';
+import { ChangeRoleDto } from '../dto/change-role.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { TokenGuard } from 'src/authentication/guards/token.guard';
 import { RoleGuard } from 'src/authentication/guards/role.guard';
 import { Roles } from 'src/authentication/decorators/role.decorator';
-import { RentedMoviesService } from './services/rented-movies.service';
+import { RentedMoviesService } from '../services/rented-movies.service';
 import { Rent } from 'src/rents/entities/rent.entity';
-import { LikedMoviesService } from './services/liked-movies.service';
+import { LikedMoviesService } from '../services/liked-movies.service';
 import { Movie } from 'src/movies/entities/movie.entity';
-import { BoughtMoviesService } from './services/bought-movies.service';
+import { BoughtMoviesService } from '../services/bought-movies.service';
 import { Order } from 'src/orders/entities/order.entity';
 import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 
