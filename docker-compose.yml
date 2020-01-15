@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:11.6
+
+    environment:
+      POSTGRES_USER: 'antonio'
+      POSTGRES_PASSWORD: 'Appl@udo'
+      POSTGRES_DB: 'movie-buster'
+
+  api:
+    build: .
+    volumes:
+      - .:/usr/src/app
+    depends_on:
+      - db
+    ports:
+      - 3000:3000
+    command: npm run start:dev
