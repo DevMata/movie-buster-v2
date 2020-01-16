@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
 import { Movie } from '../../movies/entities/movie.entity';
 import { Order } from '../../orders/entities/order.entity';
