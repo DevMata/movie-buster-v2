@@ -6,12 +6,12 @@ import {
 import { Movie } from './entities/movie.entity';
 import { MovieRepository } from './repositories/movie.repository';
 import { CreateMovieDto } from './dto/create-movie.dto';
-import { TagsService } from 'src/tags/tags.service';
-import { Tag } from 'src/tags/entities/tag.entity';
+import { TagsService } from '../tags/tags.service';
+import { Tag } from '../tags/entities/tag.entity';
 import { UpdateMovieDto } from './dto/update-movie.dto';
-import { UserPayload } from 'src/authentication/dto/user-payload.dto';
-import { UserRepository } from 'src/users/repositories/user.repository';
-import { SerializedUser } from 'src/users/dto/user.serialize';
+import { UserPayload } from '../authentication/dto/user-payload.dto';
+import { UserRepository } from '../users/repositories/user.repository';
+import { SerializedUser } from '../users/dto/user.serialize';
 import { MovieFiltersDto } from './dto/movie-filters.dto';
 
 @Injectable()
