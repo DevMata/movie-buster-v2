@@ -41,7 +41,7 @@ export class AuthenticationController {
     return this.authenticationService.logout(req);
   }
 
-  @Post('password/rest')
+  @Post('password/reset')
   resetPassword(@Body() emailDto: EmailDto): void {
     this.resetPasswordService.sendResetEmail(emailDto.email);
   }
