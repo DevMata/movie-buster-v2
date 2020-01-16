@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
+  MethodNotAllowedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../../users/repositories/user.repository';
@@ -55,6 +56,12 @@ export class ResetPasswordService {
     });
     if (!validToken) {
       throw new UnprocessableEntityException('invalid token');
+    }
+
+    if (validToken.userId !== userId) {
+      throw new MethodNotAllowedException(
+        'userId does not correspond with email',
+      );
     }
 
     await this.accessTokenRepository.delete({ jti, userId });
