@@ -5,6 +5,7 @@ import {
   Req,
   HttpCode,
   Body,
+  Query,
 } from '@nestjs/common';
 import { AuthenticationService } from './services/authentication.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -14,6 +15,8 @@ import { ApiTags, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { EmailDto } from './dto/email.dto';
 import { ResetPasswordService } from './services/reset-password.service';
+import { ResetTokenDto } from './dto/reset-token.dto';
+import { ChangePasswordDto } from 'src/users/dto/change-password.dto';
 
 @ApiTags('auth')
 @Controller('authentication')
@@ -38,8 +41,16 @@ export class AuthenticationController {
     return this.authenticationService.logout(req);
   }
 
-  @Post('resetPassword')
+  @Post('password/rest')
   resetPassword(@Body() emailDto: EmailDto): void {
     this.resetPasswordService.sendResetEmail(emailDto.email);
+  }
+
+  @Post('password/set')
+  setPassword(
+    @Query() resetTokenDto: ResetTokenDto,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ): void {
+    console.log(resetTokenDto, changePasswordDto);
   }
 }
