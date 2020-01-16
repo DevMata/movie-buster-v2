@@ -7,8 +7,8 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
-import { Tag } from 'src/tags/entities/tag.entity';
-import { User } from 'src/users/entities/user.entity';
+import { Tag } from '../../tags/entities/tag.entity';
+import { User } from '../../users/entities/user.entity';
 import { ApiHideProperty } from '@nestjs/swagger';
 
 @Entity()
