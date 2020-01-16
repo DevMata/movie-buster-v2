@@ -4,7 +4,7 @@ import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { HashHelper } from './hash.helper';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { RoleRepository } from 'src/roles/repositories/roles.repository';
+import { RoleRepository } from '../../roles/repositories/roles.repository';
 import { UpdateResult } from 'typeorm';
 
 @Injectable()
