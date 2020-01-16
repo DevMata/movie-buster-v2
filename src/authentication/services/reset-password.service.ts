@@ -54,6 +54,7 @@ export class ResetPasswordService {
       jti,
       userId,
     });
+
     if (!validToken) {
       throw new UnprocessableEntityException('invalid token');
     }
