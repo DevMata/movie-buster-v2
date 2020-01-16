@@ -15,6 +15,8 @@ import { HashHelper } from 'src/users/services/hash.helper';
 
 @Injectable()
 export class ResetPasswordService {
+  private secret: string;
+
   constructor(
     private readonly configService: ConfigService,
     private readonly userRepository: UserRepository,
@@ -22,9 +24,8 @@ export class ResetPasswordService {
     @InjectRepository(AccessToken)
     private readonly accessTokenRepository: Repository<AccessToken>,
     private readonly hashHelper: HashHelper,
-    private secret: string,
   ) {
-    secret = this.configService.get('JWT_SECRET_RESET_PASSWORD');
+    this.secret = this.configService.get('JWT_SECRET_RESET_PASSWORD');
   }
 
   async sendResetEmail(email: string): Promise<void> {
