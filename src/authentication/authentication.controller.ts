@@ -10,7 +10,7 @@ import {
 import { AuthenticationService } from './services/authentication.service';
 import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
-import { DeleteResult } from 'typeorm';
+import { DeleteResult, UpdateResult } from 'typeorm';
 import { ApiTags, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 import { LoginDto } from './dto/login.dto';
 import { EmailDto } from './dto/email.dto';
@@ -50,7 +50,10 @@ export class AuthenticationController {
   setPassword(
     @Query() resetTokenDto: ResetTokenDto,
     @Body() changePasswordDto: ChangePasswordDto,
-  ): void {
-    console.log(resetTokenDto, changePasswordDto);
+  ): Promise<UpdateResult> {
+    return this.resetPasswordService.setPassword(
+      resetTokenDto.token,
+      changePasswordDto.password,
+    );
   }
 }
