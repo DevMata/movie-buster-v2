@@ -4,6 +4,6 @@ WORKDIR /usr/src/app
 
 COPY . .
 
-RUN npm i
+RUN npm install
 
-RUN npm up
+RUN npm run up
