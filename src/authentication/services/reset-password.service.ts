@@ -46,14 +46,19 @@ export class ResetPasswordService {
   async setPassword(token: string, password: string): Promise<UpdateResult> {
     const resetToken = verify(token, this.secret);
 
-    const { jti, sub } = resetToken as { sub: string; jti: string };
+    const { jti, sub: userId } = resetToken as { sub: string; jti: string };
 
-    const validToken = await this.accessTokenRepository.findOne({ jti });
+    const validToken = await this.accessTokenRepository.findOne({
+      jti,
+      userId,
+    });
     if (!validToken) {
       throw new UnprocessableEntityException('invalid token');
     }
 
-    return this.userRepository.update(sub, {
+    await this.accessTokenRepository.delete({ jti, userId });
+
+    return this.userRepository.update(userId, {
       password: this.hashHelper.hash(password),
     });
   }
