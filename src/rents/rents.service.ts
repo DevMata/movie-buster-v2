@@ -12,7 +12,7 @@ import { SubOrderInfo } from '../order-details/dto/order-info.dto';
 import { RentDetailsService } from '../rent-details/rent-details.service';
 import { Movie } from '../movies/entities/movie.entity';
 import { RentDetails } from '../rent-details/entities/rent-detail.entity';
-import { EmailService } from 'src/email/email.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class RentsService {
@@ -83,14 +83,14 @@ export class RentsService {
       relations: ['details', 'details.movie'],
     });
 
+    if (!rent) {
+      throw new NotFoundException('rent not found');
+    }
+
     if (rent.user.userId !== userId) {
       throw new MethodNotAllowedException(
         'only the owner of a rent can return it',
       );
-    }
-
-    if (!rent) {
-      throw new NotFoundException('rent not found');
     }
 
     if (rent.status === 'returned') {
