@@ -4,7 +4,8 @@ import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { HashHelper } from './hash.helper';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { RoleRepository } from 'src/roles/repositories/roles.repository';
+import { RoleRepository } from '../../roles/repositories/roles.repository';
+import { UpdateResult } from 'typeorm';
 
 @Injectable()
 export class UsersService {
@@ -37,6 +38,15 @@ export class UsersService {
 
   updateUser(userId: string, updateUserDto: UpdateUserDto): Promise<User> {
     return this.userRepository.updateUser(userId, updateUserDto);
+  }
+
+  async changePassword(
+    userId: string,
+    password: string,
+  ): Promise<UpdateResult> {
+    const newPassword = this.hashHelper.hash(password);
+
+    return this.userRepository.changeUserPassword(userId, newPassword);
   }
 
   async changeRole(userId: string, roleName: string): Promise<User> {

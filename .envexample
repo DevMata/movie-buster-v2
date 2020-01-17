@@ -1,7 +1,12 @@
-DB_PORT=your port
-DB_HOST=your host
+DB_HOST=db
+DB_PORT=5432
 DB_NAME=movie-buster
-DB_USER=your user
-DB_PASS=your password
+DB_USER=antonio
+DB_PASS=Appl@udo
 
-JWT_SECRET=your secret
+JWT_SECRET=your JWT secret
+JWT_SECRET_RESET_PASSWORD=your JWT secret for the reset password feature
+
+SENDGRID_API_KEY=your Sendgrid API key
+ORDER_TEMPLATE_ID=Sendgrid template Id for order billing
+RENT_TEMPLATE_ID=Sendgrid template Id for rent billing

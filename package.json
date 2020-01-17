@@ -4,6 +4,9 @@
   "description": "",
   "author": "",
   "license": "MIT",
+  "engines": {
+    "node": ">=0.11"
+  },
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
@@ -14,6 +17,7 @@
     "up": "npm run build && npm run start:prod",
     "start:prod": "node dist/main",
     "test": "jest",
+    "lint": "npx eslint src/**/*.ts",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",

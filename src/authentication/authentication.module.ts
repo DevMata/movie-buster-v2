@@ -9,6 +9,8 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtConfigService } from './services/jwt-config.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AccessToken } from './entities/token.entity';
+import { ResetPasswordService } from './services/reset-password.service';
+import { EmailModule } from 'src/email/email.module';
 
 @Module({
   imports: [
@@ -19,9 +21,15 @@ import { AccessToken } from './entities/token.entity';
       useClass: JwtConfigService,
     }),
     TypeOrmModule.forFeature([AccessToken]),
+    EmailModule,
   ],
   controllers: [AuthenticationController],
-  providers: [AuthenticationService, JwtStrategy, LocalStrategy],
+  providers: [
+    AuthenticationService,
+    JwtStrategy,
+    LocalStrategy,
+    ResetPasswordService,
+  ],
   exports: [AuthenticationService, TypeOrmModule, JwtModule],
 })
 export class AuthenticationModule {}

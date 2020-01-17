@@ -3,7 +3,7 @@ import { User } from '../entities/user.entity';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { UpdateUserDto } from '../dto/update-user.dto';
-import { Role } from 'src/roles/entities/role.entity';
+import { Role } from '../../roles/entities/role.entity';
 
 @EntityRepository(User)
 export class UserRepository extends Repository<User> {

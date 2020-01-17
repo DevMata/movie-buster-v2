@@ -7,6 +7,7 @@ export class MovieRepository extends Repository<Movie> {
   async getMovies(filters: MovieFiltersDto): Promise<Array<Movie>> {
     const { tags, title, sort } = filters;
 
+    let tagsArray = new Array<string>();
     const regex = /(?<dir>\-)?(?<prop>(likes|title))/;
 
     const queryBuilder = this.createQueryBuilder('movie').leftJoinAndSelect(
@@ -15,7 +16,7 @@ export class MovieRepository extends Repository<Movie> {
     );
 
     if (tags) {
-      const tagsArray = tags.split(',').map(tag => tag.toLowerCase());
+      tagsArray = tags.split(',').map(tag => tag.toLowerCase());
       queryBuilder.andWhere('tag.name IN (:...tags)', { tags: tagsArray });
     }
 
@@ -45,6 +46,10 @@ export class MovieRepository extends Repository<Movie> {
         'tag',
       ])
       .getMany();
+
+    if (tags && tagsArray.length) {
+      return movies.filter(movie => movie.tags.length === tagsArray.length);
+    }
 
     return movies;
   }
