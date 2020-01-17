@@ -16,6 +16,7 @@ async function bootstrap(): Promise<void> {
     .addTag('orders')
     .addTag('rents')
     .addTag('movies')
+    .addTag('users/me')
     .addBearerAuth()
     .build();
 
