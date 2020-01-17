@@ -12,7 +12,7 @@ import { AccessToken } from '../entities/token.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { sign, verify } from 'jsonwebtoken';
-import { HashHelper } from 'src/users/services/hash.helper';
+import { HashHelper } from '../../users/services/hash.helper';
 
 @Injectable()
 export class ResetPasswordService {
