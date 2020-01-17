@@ -59,12 +59,6 @@ export class ResetPasswordService {
       throw new UnprocessableEntityException('invalid token');
     }
 
-    if (validToken.userId !== userId) {
-      throw new MethodNotAllowedException(
-        'userId does not correspond with email',
-      );
-    }
-
     await this.accessTokenRepository.delete({ jti, userId });
 
     return this.userRepository.update(userId, {
