@@ -1,16 +1,18 @@
+/* eslint-disable */
+
 import { Test } from '@nestjs/testing';
 import { TagsService } from './tags.service';
 import { TagRepository } from './repositories/tag.repository';
 
-const mockTagRepository = () => ({
-  getTags: jest.fn(),
-  findTagById: jest.fn(),
-  findTagByName: jest.fn(),
-});
-
 describe('TagsService', () => {
-  let tagsService: TagsService;
-  let tagRepository: TagRepository;
+  let service: TagsService;
+  let tagRepo: TagRepository;
+
+  const mockTagRepository = () => ({
+    getTags: jest.fn(),
+    findTagById: jest.fn(),
+    findTagByName: jest.fn(),
+  });
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -20,37 +22,17 @@ describe('TagsService', () => {
       ],
     }).compile();
 
-    tagsService = await module.get(TagsService);
-    tagRepository = await module.get(TagRepository);
+    service = module.get<TagsService>(TagsService);
+    tagRepo = module.get<TagRepository>(TagRepository);
   });
 
   describe('getTags', () => {
-    it('gets all tags from repo', () => {
-      expect(tagRepository.getTags).not.toHaveBeenCalled();
+    it('should gets all tags from repo', async () => {
+      (tagRepo.getTags as jest.Mock).mockResolvedValue('tags');
 
-      tagRepository.getTags();
+      const tags = await service.getTags();
 
-      expect(tagRepository.getTags).toHaveBeenCalled();
-    });
-  });
-
-  describe('findTagById', () => {
-    it('gets specific tag from repo', () => {
-      expect(tagRepository.findTagById).not.toHaveBeenCalled();
-
-      tagRepository.findTagById('asasa');
-
-      expect(tagRepository.findTagById).toHaveBeenCalled();
-    });
-  });
-
-  describe('findTagByName', () => {
-    it('gets specific tag from repo', () => {
-      expect(tagRepository.findTagByName).not.toHaveBeenCalled();
-
-      tagRepository.findTagByName('asasa');
-
-      expect(tagRepository.findTagByName).toHaveBeenCalled();
+      expect(tags).toBe('tags');
     });
   });
 });
