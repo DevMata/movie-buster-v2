@@ -11,7 +11,10 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { AccessToken } from '../entities/token.entity';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { sign, verify } from 'jsonwebtoken';
-import { NotFoundException } from '@nestjs/common';
+import {
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 
 jest.mock('@nestjs/common/utils/random-string-generator.util');
 jest.mock('jsonwebtoken');
@@ -30,6 +33,7 @@ describe('ResetPasswordService', () => {
 
   const mockUserRepo = () => ({
     findUserByEmail: jest.fn(),
+    update: jest.fn(),
   });
 
   const mockEmailService = () => ({
@@ -38,9 +42,13 @@ describe('ResetPasswordService', () => {
 
   const mockAccessTokenRepo = () => ({
     save: jest.fn(),
+    findOne: jest.fn(),
+    delete: jest.fn(),
   });
 
-  const mockHashHelper = () => ({});
+  const mockHashHelper = () => ({
+    hash: jest.fn(),
+  });
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -114,6 +122,35 @@ describe('ResetPasswordService', () => {
         'email',
         'jwt token',
       );
+    });
+  });
+
+  describe('setPassword', () => {
+    it('should throw unprocessable entity exception when the token is not found in the database', () => {
+      (verify as jest.Mock).mockReturnValue('token');
+      (accessTokenRepo.findOne as jest.Mock).mockResolvedValue(null);
+
+      expect(service.setPassword('jwt', 'pass')).rejects.toThrow(
+        UnprocessableEntityException,
+      );
+    });
+
+    it('should set new password after token validation', async () => {
+      const mockToken = { sub: 'userId', jti: 'random uuid' };
+
+      (verify as jest.Mock).mockReturnValue(mockToken);
+      (accessTokenRepo.findOne as jest.Mock).mockResolvedValue('token');
+      (hashHelper.hash as jest.Mock).mockReturnValue('hashed password');
+
+      await service.setPassword('token', 'password');
+
+      expect(accessTokenRepo.delete).toHaveBeenCalledWith({
+        jti: 'random uuid',
+        userId: 'userId',
+      });
+      expect(userRepo.update).toHaveBeenCalledWith('userId', {
+        password: 'hashed password',
+      });
     });
   });
 });
