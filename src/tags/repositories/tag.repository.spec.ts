@@ -13,4 +13,20 @@ describe('TagRepository', () => {
 
     tagRepo = module.get<TagRepository>(TagRepository);
   });
+
+  describe('createMultipleTags', () => {
+    it('should return an array of tags', async () => {
+      const mockTagArray = [{ name: 'tag1' }, { name: 'tag2' }];
+      const newTag = { name: 'tag3' };
+      const tagArray = ['tag1', 'tag2', 'tag3'];
+
+      tagRepo.find = jest.fn().mockResolvedValue(mockTagArray);
+      tagRepo.save = jest.fn().mockResolvedValue([newTag]);
+
+      const tags = await tagRepo.createMultipleTags(tagArray);
+
+      expect(tagRepo.save).toHaveBeenCalledWith([{ name: 'tag3' }]);
+      expect(tags).toStrictEqual([...mockTagArray, newTag]);
+    });
+  });
 });
