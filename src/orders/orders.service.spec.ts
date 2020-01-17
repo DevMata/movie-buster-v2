@@ -2,7 +2,7 @@
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { OrdersService } from './orders.service';
-import { Repository, getRepository, getTreeRepository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { UserRepository } from '../users/repositories/user.repository';
 import { EmailService } from '../email/email.service';
 import { OrderDetailsService } from '../order-details/order-details.service';
