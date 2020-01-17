@@ -7,6 +7,10 @@ import { Repository } from 'typeorm';
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AccessToken } from '../entities/token.entity';
+import { compareSync } from 'bcryptjs';
+import { async } from 'rxjs/internal/scheduler/async';
+
+jest.mock('bcryptjs');
 
 describe('AuthenticationService', () => {
   let service: AuthenticationService;
@@ -14,7 +18,9 @@ describe('AuthenticationService', () => {
   let jwtService: JwtService;
   let accessTokenRepo: Repository<any>;
 
-  const mockUserService = () => ({});
+  const mockUserService = () => ({
+    findUserByEmail: jest.fn(),
+  });
 
   const mockJwtService = () => ({});
 
@@ -43,5 +49,32 @@ describe('AuthenticationService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('validateUser', () => {
+    it('should return null if the user is not found', async () => {
+      (userService.findUserByEmail as jest.Mock).mockResolvedValue(null);
+      (compareSync as jest.Mock).mockReturnValue(true);
+
+      expect(await service.validateUser('email', 'pass')).toBe(null);
+    });
+
+    it('should return null if the provided password is not correct', async () => {
+      (userService.findUserByEmail as jest.Mock).mockResolvedValue('user');
+      (compareSync as jest.Mock).mockReturnValue(false);
+
+      expect(await service.validateUser('email', 'pass')).toBe(null);
+    });
+
+    it('should return user if authentication is correct', async () => {
+      const mockUser = { userId: 'userId', email: 'email' };
+
+      (userService.findUserByEmail as jest.Mock).mockResolvedValue(mockUser);
+      (compareSync as jest.Mock).mockReturnValue(true);
+
+      expect(await service.validateUser('email', 'pass')).toStrictEqual(
+        mockUser,
+      );
+    });
   });
 });
