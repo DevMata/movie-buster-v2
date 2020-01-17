@@ -4,11 +4,11 @@
 
 # Movie-buster
 
-This API is built in NestJS framework with Typescript. It allows to handle a movie store. You can handle users, movies with functions such as like, rent, return and buy. It can send billing emails as well. You can also handle two type of users, client and admin. The API is dockerized. The API is document through Postmand docs and OpenAPI standard with Swagger as well.
+This API is built in NestJS framework with Typescript. It allows to handle a movie store. You can handle users, movies with functions such as like, rent, return and buy. It can send billing emails as well. You can also handle two type of users, client and admin. The API documentation is provided through Postmand docs and OpenAPI standard with Swagger as well. The project is built with docker and docker-compose.
 
 ## Pre-requisites
 
-1. Docker and docker-compose must be installed on this machine
+1. Docker and docker-compose must be installed on your machine
 2. This API uses Sendgrid API v3 for sending email, so you must provide your Sendgrid API key
 3. This API send emails when a user makes a rent or an order of movies, it takes advantage of Sendgrid dynamic templates so you must provide two template ids, one for orders and one for rents respectively
 4. Check docker-compose.yml for get an example of the env vars of postgres image, so your .env must fullfil the same values
@@ -24,6 +24,7 @@ This API is built in NestJS framework with Typescript. It allows to handle a mov
 - payload for login is {email:string,password:string}
 - it is setted a default admin, its credentials {email:'admin@admin.com', password: 'admin@buster'}
 - it is setted a default client, its credentials {email:'client@client.com', password: 'client@buster'}
+- go to localhost:3000/api to see API documentation with swagger
 
 ## Environment variables required
 
