@@ -2,7 +2,6 @@ import {
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
-  MethodNotAllowedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../../users/repositories/user.repository';
