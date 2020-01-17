@@ -8,9 +8,10 @@ import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { AccessToken } from '../entities/token.entity';
 import { compareSync } from 'bcryptjs';
-import { async } from 'rxjs/internal/scheduler/async';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 
 jest.mock('bcryptjs');
+jest.mock('@nestjs/common/utils/random-string-generator.util');
 
 describe('AuthenticationService', () => {
   let service: AuthenticationService;
@@ -22,9 +23,15 @@ describe('AuthenticationService', () => {
     findUserByEmail: jest.fn(),
   });
 
-  const mockJwtService = () => ({});
+  const mockJwtService = () => ({
+    sign: jest.fn(),
+    decode: jest.fn(),
+  });
 
-  const mockAccessTokenRepo = () => ({});
+  const mockAccessTokenRepo = () => ({
+    save: jest.fn(),
+    delete: jest.fn(),
+  });
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -75,6 +82,27 @@ describe('AuthenticationService', () => {
       expect(await service.validateUser('email', 'pass')).toStrictEqual(
         mockUser,
       );
+    });
+  });
+
+  describe('login', () => {
+    it('should return a jwt token', async () => {
+      const mockUserPayload = { userId: 'userId', email: 'email' };
+      const payload = { username: 'email', sub: 'userId' };
+
+      (randomStringGenerator as jest.Mock).mockReturnValue('random uuid');
+      (jwtService.sign as jest.Mock).mockReturnValue('jwt token');
+
+      expect(await service.login(mockUserPayload)).toStrictEqual({
+        accessToken: 'jwt token',
+      });
+      expect(accessTokenRepo.save).toHaveBeenCalledWith({
+        jti: 'random uuid',
+        userId: mockUserPayload.userId,
+      });
+      expect(jwtService.sign).toHaveBeenCalledWith(payload, {
+        jwtid: 'random uuid',
+      });
     });
   });
 });
