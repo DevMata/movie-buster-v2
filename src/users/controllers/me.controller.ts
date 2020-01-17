@@ -12,7 +12,10 @@ import { Order } from 'src/orders/entities/order.entity';
 import { Rent } from 'src/rents/entities/rent.entity';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { UpdateResult } from 'typeorm';
+import { ApiTags, ApiBearerAuth, ApiBody } from '@nestjs/swagger';
 
+@ApiTags('users/me')
+@ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
 @Controller('users/me')
 export class MeController {
@@ -43,6 +46,7 @@ export class MeController {
     return this.rentedMoviesService.getRentedMovies(user.userId);
   }
 
+  @ApiBody({ type: ChangePasswordDto })
   @Post('changePassword')
   changePassword(
     @LoggedUser() user: UserPayload,
