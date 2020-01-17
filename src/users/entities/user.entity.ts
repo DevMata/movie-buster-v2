@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import {
   Entity,
   Column,
@@ -9,10 +11,10 @@ import {
   JoinTable,
   OneToMany,
 } from 'typeorm';
-import { Role } from 'src/roles/entities/role.entity';
-import { Movie } from 'src/movies/entities/movie.entity';
-import { Rent } from 'src/rents/entities/rent.entity';
-import { Order } from 'src/orders/entities/order.entity';
+import { Role } from '../../roles/entities/role.entity';
+import { Movie } from '../../movies/entities/movie.entity';
+import { Rent } from '../../rents/entities/rent.entity';
+import { Order } from '../../orders/entities/order.entity';
 import { ApiProperty, ApiHideProperty } from '@nestjs/swagger';
 
 @Entity()

@@ -2,7 +2,6 @@ import {
   Injectable,
   NotFoundException,
   UnprocessableEntityException,
-  MethodNotAllowedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../../users/repositories/user.repository';
@@ -12,7 +11,7 @@ import { AccessToken } from '../entities/token.entity';
 import { Repository, UpdateResult } from 'typeorm';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { sign, verify } from 'jsonwebtoken';
-import { HashHelper } from 'src/users/services/hash.helper';
+import { HashHelper } from '../../users/services/hash.helper';
 
 @Injectable()
 export class ResetPasswordService {
@@ -57,12 +56,6 @@ export class ResetPasswordService {
 
     if (!validToken) {
       throw new UnprocessableEntityException('invalid token');
-    }
-
-    if (validToken.userId !== userId) {
-      throw new MethodNotAllowedException(
-        'userId does not correspond with email',
-      );
     }
 
     await this.accessTokenRepository.delete({ jti, userId });

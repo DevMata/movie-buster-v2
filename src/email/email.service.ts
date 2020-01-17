@@ -42,7 +42,7 @@ export class EmailService {
       subject: 'Password reset',
       html:
         `<strong>You required a password reset</strong>` +
-        `</br></br>>` +
+        `</br></br>` +
         `Here is your token: ${token}`,
     };
 

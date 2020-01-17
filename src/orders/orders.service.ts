@@ -8,10 +8,10 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from '../users/repositories/user.repository';
 import { SubOrderInfo } from '../order-details/dto/order-info.dto';
-import { OrderDetailsService } from 'src/order-details/order-details.service';
+import { OrderDetailsService } from '../order-details/order-details.service';
 import { Movie } from '../movies/entities/movie.entity';
 import { OrderDetails } from '../order-details/entities/order-detail.entity';
-import { EmailService } from 'src/email/email.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class OrdersService {
