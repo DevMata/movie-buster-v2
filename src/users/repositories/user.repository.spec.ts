@@ -109,14 +109,17 @@ describe('UserRepository', () => {
     });
 
     it('shoud throw a conflict exception if the new email is already in use', () => {
-      userRepo.find = jest
+      userRepo.findOne = jest
         .fn()
         .mockResolvedValueOnce('user')
         .mockResolvedValueOnce('user');
 
+      userRepo.save = jest.fn();
+
       expect(userRepo.updateUser('userId', mockUpdateUserDto)).rejects.toThrow(
         ConflictException,
       );
+      expect(userRepo.save).not.toHaveBeenCalled();
     });
   });
 });
