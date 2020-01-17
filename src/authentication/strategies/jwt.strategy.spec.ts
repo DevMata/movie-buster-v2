@@ -4,6 +4,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { ConfigService } from '@nestjs/config';
 import { UserRepository } from '../../users/repositories/user.repository';
 import { Test } from '@nestjs/testing';
+import { TokenPayload } from '../dto/token-payload.dto';
 
 describe('JwtStrategy', () => {
   let strategy: JwtStrategy;
@@ -14,7 +15,9 @@ describe('JwtStrategy', () => {
     get: jest.fn().mockReturnValue('secret'),
   });
 
-  const mockUserRepo = () => ({});
+  const mockUserRepo = () => ({
+    findOne: jest.fn(),
+  });
 
   beforeEach(async () => {
     const module = await Test.createTestingModule({
@@ -38,5 +41,26 @@ describe('JwtStrategy', () => {
 
   it('should be defined', () => {
     expect(strategy).toBeDefined();
+  });
+
+  describe('validate', () => {
+    it('should return a user payload with user id, email and role', async () => {
+      const mockUser = { role: { name: 'role' } };
+      const mockPayload = { username: 'email', sub: 'userId' } as TokenPayload;
+      const mockUserPayload = {
+        userId: 'userId',
+        email: 'email',
+        role: 'role',
+      };
+
+      (userRepo.findOne as jest.Mock).mockResolvedValue(mockUser);
+
+      const user = await strategy.validate(mockPayload);
+
+      expect(user).toStrictEqual(mockUserPayload);
+      expect(userRepo.findOne).toHaveBeenCalledWith('userId', {
+        relations: ['role'],
+      });
+    });
   });
 });
