@@ -9,6 +9,9 @@ services:
       POSTGRES_PASSWORD: 'Appl@udo'
       POSTGRES_DB: 'movie-buster'
 
+  redis-server:
+    image: redis
+
   api:
     build: .
     volumes:
@@ -17,4 +20,4 @@ services:
       - db
     ports:
       - 3000:3000
-    command: npm run start:dev
+    command: npm run up
