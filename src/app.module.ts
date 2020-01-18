@@ -13,6 +13,7 @@ import { OrdersModule } from './orders/orders.module';
 import { OrderDetailsModule } from './order-details/order-details.module';
 import { RentDetailsModule } from './rent-details/rent-details.module';
 import { EmailModule } from './email/email.module';
+import { RedisServiceService } from './redis-service.service';
 
 @Module({
   imports: [
@@ -32,5 +33,6 @@ import { EmailModule } from './email/email.module';
     RentDetailsModule,
     EmailModule,
   ],
+  providers: [RedisServiceService],
 })
 export class AppModule {}
